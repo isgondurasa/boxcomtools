@@ -8,7 +8,7 @@ try:
                           SMARTSHEET_CLIENT_ID, SMARTSHEET_CLIENT_SECRET)
 
 except ImportError:
-    print("Please, create settings.py file with keys")
+    print("Please, do 'cp settings.py.default settings.py' first")
     sys.exit(0)
 
     

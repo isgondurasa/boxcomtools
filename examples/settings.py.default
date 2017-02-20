@@ -1,0 +1,7 @@
+BOX_CLIENT_ID = "box.com client_id placeholder"
+BOX_CLIENT_SECRET = "box.com client_secret_placeholder"
+
+SMARTSHEET_CLIENT_ID = "smartsheet client_id placeholder"
+SMARTSHEET_CLIENT_SECRET = "smartsheet client_secret placeholder"
+
+
