@@ -57,9 +57,11 @@ async def auth_smartsheet(request):
     res = await client.authorize(code)
     print(res)
     print("AUTH OK")    
-    print (await client.list_sheets())
-    
-    return locals()
+
+    lists = await client.list_sheets()
+
+
+    return [x.__dict__ for x in lists]
 
 
 def make_app(loop=None):
