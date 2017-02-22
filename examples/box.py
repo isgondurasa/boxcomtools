@@ -1,30 +1,45 @@
 from boxcomtools.box import Client
 
-from flask import Flask
-from flask import redirect, request, render_template
+from boxcomtools.smartsheet import Client as SmartsheetClient
 
-try:
-    from settings import (BOX_CLIENT_ID, BOX_CLIENT_SECRET,
-                          SMARTSHEET_CLIENT_ID, SMARTSHEET_CLIENT_SECRET)
+import asyncio
+import json
 
-except ImportError:
-    print("Please, do 'cp settings.py.default settings.py' first")
-    sys.exit(0)
+from aiohttp import web
+from settings import (BOX_CLIENT_ID, BOX_CLIENT_SECRET,
+                      SMARTSHEET_CLIENT_ID, SMARTSHEET_CLIENT_SECRET)
 
-    
-app = Flask(__name__)
 
-ACCESS_TOKEN = None
-REFRESH_TOKEN = None
+import aiohttp_jinja2
+import jinja2
 
-@app.route("/")
-def index():
+
+
+
+def box(request):
     cli = Client(BOX_CLIENT_ID, BOX_CLIENT_SECRET, callback=store_tokens)
     auth_url, csrf_token = cli.auth_url
     return redirect(auth_url)
 
-@app.route("/api/oauth/login")
-def auth():
+
+async def smartsheet(request):
+    cli = SmartsheetClient(SMARTSHEET_CLIENT_ID, SMARTSHEET_CLIENT_SECRET)
+    auth_url = cli.auth_url
+    print(auth_url)
+    return web.HTTPFound(auth_url)
+
+@aiohttp_jinja2.template('index.html')
+async def auth_smartsheet(request):
+    import ipdb; ipdb.set_trace()
+    _args = request.GET
+    code = _args.get('code')
+    client = SmartsheetClient(SMARTSHEET_CLIENT_ID, SMARTSHEET_CLIENT_SECRET)
+    res = await client.authorize(code)
+    return locals()
+    
+
+@aiohttp_jinja2.template('index.html')
+async def auth_box(request):
 
     _args = request.args
     code, state = _args.get("code"), _args.get("state")
@@ -44,13 +59,22 @@ def auth():
         'current_user': user
     }
         
-    return render_template("index.html", **params)
+    return params
 
-def store_tokens(self, access_token, refresh_token):
+def make_app(loop=None):
+    app = web.Application(loop=loop)
+    app.router.add_route("GET", '/smartsheet', smartsheet)
+    app.router.add_route("GET", '/api/oauth/smartsheet', auth_smartsheet)
 
-    ACCESS_TOKEN = access_token
-    REFRESH_TOKEN = refresh_token
+    app.router.add_route("GET", '/box', box)
+    app.router.add_route("GET", '/api/oauth/box', auth_smartsheet)
 
+    return app
+
+app = make_app()
+
+aiohttp_jinja2.setup(
+    app, loader=jinja2.PackageLoader('templates'))
 
 if __name__ == "__main__":
-    app.run("0.0.0.0", 5000, debug=True)
+    web.run_app(app)
