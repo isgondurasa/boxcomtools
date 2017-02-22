@@ -14,8 +14,6 @@ import aiohttp_jinja2
 import jinja2
 
 
-
-
 def box(request):
     cli = Client(BOX_CLIENT_ID, BOX_CLIENT_SECRET, callback=store_tokens)
     auth_url, csrf_token = cli.auth_url
