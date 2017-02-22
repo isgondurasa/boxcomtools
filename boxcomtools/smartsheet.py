@@ -1,3 +1,13 @@
+import hashlib
+import json
+
+from urllib.parse import urlencode
+
+import aiohttp
+
+
+from .config import SmartsheetConfig as Config
+
 
 class NoClientKeyDefined(Exception):
     pass
@@ -6,27 +16,10 @@ class NoClientKeyDefined(Exception):
 class NoAuthCodeDefined(Exception):
     pass
 
-
-class Config:
-    auth_endpoint = "https://app.smartsheet.com/b/authorize"
-    token_obtaining_endpoint = "https://api.smartsheet.com/2.0/token"    
-    token_obtaining_body = {
-        'grant_type': 'authorization_code',
-        'client_id': None,
-        'code': None,
-        'redirect_uri': "http://localhost:8080/api/oauth/smartsheet",
-        'hash': '123123'
-    }
-    
-    redirect_url = "http://localhost:8080/api/oauth/smartsheet"
-    #scopes = ("READ_SHEETS", "WRITE_SHEETS", "DELETE_SHEETS", "CREATE_SHEETS", "SHARE_SHEETS")
-    scopes = ("READ_SHEETS", "CREATE_SHEETS")
-    state = "PREPARE"
-
     
 class Client:
 
-    def __init__(self, client_id, client_secret):
+    def __init__(self, client_id, client_secret, access_token=None, refresh_token=None):
 
         if not client_id:
             raise NoClientKeyDefined("No Client ID")
@@ -40,6 +33,9 @@ class Client:
         self.client_id = client_id
         self.client_secret = client_secret
 
+        self.access_token = access_token
+        self.refresh_token = refresh_token
+        
     @property
     def auth_url(self):
         return self.auth_url_t % dict(auth_endpoint=Config.auth_endpoint,
@@ -54,21 +50,53 @@ class Client:
 
         import hashlib
 
-        _hash = hashlib.sha256((self.client_secret + code).encode("utf-8")).hexdigest()
-        body['hash'] = _hash
-        
+        _hash = "%s|%s" % (self.client_secret, code)
+        body['hash'] = hashlib.sha256(_hash.encode("utf-8")).hexdigest()
+
         headers = {
             'Content-Type': 'application/x-www-form-urlencoded'
         }
-
-        import json
-        import aiohttp
-
+        url = Config.token_obtaining_endpoint + "?" + urlencode(body)
+        
         async with aiohttp.ClientSession() as session:
-            async with session.post(Config.token_obtaining_endpoint,
+            async with session.post(url,
                                     headers=headers,
                                     data=json.dumps(body)) as resp:
-                print(resp.status)
+                body = await resp.text()
+                try:
+                    body = json.loads(body)
+
+                    self.access_token = body.get('access_token')
+                    self.refresh_token = body.get('refresh_token')
+                    return self.access_token, self.refresh_token
+                           
+                except Exception as e:
+                    print(e)
+                    raise
+
+    async def _request(self, access_token, method='get', resource='sheets', **params):
+        url = "%s%s" % (Config.request_url, resource)
+        headers = {
+            "Authorization": "Bearer " + access_token,
+            "Content-Type": "application/json"
+        }
+
+        print("CALL: %s" % url)
+        async with aiohttp.ClientSession() as session:
+            async with getattr(session, method)(url,
+                                                headers=headers,
+                                                data=json.dumps(params)) as resp:
                 body = await resp.text()
                 return body
+
+    async def list_sheets(self, access_token=None):
+
+        if not access_token:
+            access_token = self.access_token
+        
+        if not access_token:
+            raise NoAccessTokenException("No Access Token Defined")
+        
+        return await self._request(access_token)
+                
         

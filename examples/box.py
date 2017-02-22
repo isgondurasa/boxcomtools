@@ -17,24 +17,8 @@ import jinja2
 def box(request):
     cli = Client(BOX_CLIENT_ID, BOX_CLIENT_SECRET, callback=store_tokens)
     auth_url, csrf_token = cli.auth_url
-    return redirect(auth_url)
-
-
-async def smartsheet(request):
-    cli = SmartsheetClient(SMARTSHEET_CLIENT_ID, SMARTSHEET_CLIENT_SECRET)
-    auth_url = cli.auth_url
-    print(auth_url)
     return web.HTTPFound(auth_url)
 
-@aiohttp_jinja2.template('index.html')
-async def auth_smartsheet(request):
-    import ipdb; ipdb.set_trace()
-    _args = request.GET
-    code = _args.get('code')
-    client = SmartsheetClient(SMARTSHEET_CLIENT_ID, SMARTSHEET_CLIENT_SECRET)
-    res = await client.authorize(code)
-    return locals()
-    
 
 @aiohttp_jinja2.template('index.html')
 async def auth_box(request):
@@ -59,6 +43,25 @@ async def auth_box(request):
         
     return params
 
+
+async def smartsheet(request):
+    cli = SmartsheetClient(SMARTSHEET_CLIENT_ID, SMARTSHEET_CLIENT_SECRET)
+    auth_url = cli.auth_url
+    return web.HTTPFound(auth_url)
+
+@aiohttp_jinja2.template('index.html')
+async def auth_smartsheet(request):
+    _args = request.GET
+    code = _args.get('code')
+    client = SmartsheetClient(SMARTSHEET_CLIENT_ID, SMARTSHEET_CLIENT_SECRET)
+    res = await client.authorize(code)
+    print(res)
+    print("AUTH OK")    
+    print (await client.list_sheets())
+    
+    return locals()
+
+
 def make_app(loop=None):
     app = web.Application(loop=loop)
     app.router.add_route("GET", '/smartsheet', smartsheet)
@@ -71,8 +74,7 @@ def make_app(loop=None):
 
 app = make_app()
 
-aiohttp_jinja2.setup(
-    app, loader=jinja2.PackageLoader('templates'))
+aiohttp_jinja2.setup(app, loader=jinja2.PackageLoader('templates'))
 
 if __name__ == "__main__":
     web.run_app(app)
