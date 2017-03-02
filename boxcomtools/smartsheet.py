@@ -4,24 +4,11 @@ import json
 from urllib.parse import urlencode
 
 import aiohttp
+from boxcomtools.config import SmartsheetConfig as Config
+from boxcomtools.exceptions import (NoClientKeyDefined,
+                                    NoAuthCodeDefined,
+                                    NoAccessTokenException)
 
-
-try:
-    from .config import SmartsheetConfig as Config
-except (ImportError, SystemError):
-    from config import SmartsheetConfig as Config
-
-    
-class NoClientKeyDefined(Exception):
-    pass
-
-
-class NoAuthCodeDefined(Exception):
-    pass
-
-
-class NoAccessTokenException(Exception):
-    pass
 
 
 class SmartsheetObject:
