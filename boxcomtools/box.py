@@ -5,7 +5,7 @@ from boxsdk.exception import BoxOAuthException
 
 __all__ = ('Client',)
 
-class BaseOauthClient():
+class BaseOauthClient:
     pass
 
 class AsyncBoxObject:
@@ -29,6 +29,9 @@ class Metadata(AsyncBoxObject):
         url = self._connection.get_url("files/%d/metadata/" % f_id)
         response = self._connection.make_request(method="GET", url=url)
         return response.json
+
+    async def set(self, f_id, items, scope='enterprise', **kwargs):
+        pass
 
     
 class Client(BaseOauthClient):
