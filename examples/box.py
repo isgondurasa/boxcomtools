@@ -33,9 +33,6 @@ def box(request):
 
 @aiohttp_jinja2.template('base.html')
 async def auth_box(request):
-
-    logging.info("parse code")
-
     _args = request.GET    
     code = _args.get("code")
     client = Client(BOX_CLIENT_ID, BOX_CLIENT_SECRET)
@@ -45,17 +42,17 @@ async def auth_box(request):
     logging.info("Refresh token is: %s" % refresh_token)
 
     folder = client.folder()
-
     folder_info = await folder.get()
 
     print(folder_info)
-    # files = await folder.files
 
-    # for fi in files:
-    #     data = await fi.get()
+    files = await folder.files
+    
+    for fi in files:
+        data = await fi.get()
 
-    # for fi in files:
-    #     metadata = await fi.metadata.get()
+    for fi in files:
+        m = await fi.get_metadata()
 
     return custom_result(folder_info)
 

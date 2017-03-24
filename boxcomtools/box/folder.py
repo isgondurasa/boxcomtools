@@ -10,17 +10,13 @@ class Folder(BaseObject, Config):
     """
     folder API endpoint
     """
+    __resource__ = "folders"
+    
     def __init__(self, session, object_id=None):
         super(Folder, self).__init__(session, object_id)
         self._object_id = object_id or "0"
         self._files = []
         self._data = {}
-
-    def get_url(self):
-        """
-        returns base url for folder API endpoint
-        """
-        return "%s/%s/%s" % (self.request_url, "folders", self._object_id)
 
     async def get(self):
         """
@@ -28,12 +24,9 @@ class Folder(BaseObject, Config):
         -H "Authorization: Bearer ACCESS_TOKEN" \
         """
         try:
-            logging.info("before request")
             self._data = await self.request(self.get_url())
-            logging.info("after request")
             self._attach_to_object(self._data)            
         except KeyError as e:
-            # TODO (sao): logging
             logging.exception(e)
         return self._data
 

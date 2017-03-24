@@ -4,9 +4,13 @@ from boxcomtools.base.config import BoxConfig
 
 
 class Metadata(BaseObject):
-
+    """
+    metadata API endpoint
+    """
     __scope__ = 'enterprise'
+    __resource__ = "metadata"
 
+    
     def get_url(self, template=""):
         url = BoxConfig.request_url + 'files/%s/metadata' % self.id
         if template:

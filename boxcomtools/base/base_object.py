@@ -5,12 +5,22 @@ import aiohttp
 
 
 class BaseObject:
+
+    __resource__ = ""
+    
     def __init__(self, session=None, object_id=None):
         self._session = session
         self._object_id = object_id
 
+
     def get_url(self):
-        raise NotImplementedError
+        """
+        returns base url for resource API endpoint
+        __resource__ should be defined in child classes
+        """
+        return "%s/%s/%s" % (self.request_url,
+                             self.__resource__,
+                             self._object_id)
 
     @property
     def headers(self):
