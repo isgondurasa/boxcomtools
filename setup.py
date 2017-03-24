@@ -3,11 +3,10 @@
 from distutils.core import setup
 
 setup(name='boxcomtools',
-      version='0.0.1',
-      description='A set of tools to transfer data between cloud providers (box.com, smartsheet)',
+      version='0.0.3',
+      description='A set of tools to transfer data between box and smartsheet',
       author='Andrey Sviridov',
       author_email='isgondurasa@gmail.com',
-      url='',
-      py_modules=['boxsdk'],
+      url='https://github.com/isgondurasa/boxcomtools',
       packages=['boxcomtools'],
      )

@@ -1,9 +1,7 @@
 import os
 
-
 BOX_CLIENT_ID = os.environ.get('BOX_CLIENT_ID', '')
 BOX_CLIENT_SECRET = os.environ.get('BOX_CLIENT_SECRET')
 
 SMARTSHEET_CLIENT_ID = os.environ.get('SMARTSHEET_CLIENT_ID', '')
 SMARTSHEET_CLIENT_SECRET = os.environ.get('SMARTSHEET_CLIENT_SECRET', '')
-
