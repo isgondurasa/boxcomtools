@@ -9,20 +9,24 @@ class Metadata(BaseObject):
     """
     __scope__ = 'enterprise'
     __resource__ = "metadata"
-
     
     def get_url(self, template=""):
         url = BoxConfig.request_url + 'files/%s/metadata' % self.id
         if template:
             url += "/%s/%s" % (self.__scope__, template)
         return url
+
+    def to_json(self):
+        if not self._data:
+            return {}
     
     async def get(self, template=""):
         """
         curl https://api.box.com/2.0/files/5010739061/metadata/enterprise/bandInfo \
         -H "Authorization: Bearer ACCESS_TOKEN"
         """
-        return await self.request(url=self.get_url(template))
+        self._data = await self.request(url=self.get_url(template))
+        return self._data
 
     async def post(self, items, template):
         """
@@ -43,5 +47,3 @@ class Metadata(BaseObject):
         """
         TODO (sao): delete
         """
-
-        

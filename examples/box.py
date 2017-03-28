@@ -44,15 +44,17 @@ async def auth_box(request):
     folder = client.folder()
     folder_info = await folder.get()
 
-    print(folder_info)
-
     files = await folder.files
     
     for fi in files:
         data = await fi.get()
-
+        
+        print(fi.to_dict())
+    print("\n===============\n")
+        
     for fi in files:
         m = await fi.get_metadata()
+        print(m)
 
     return custom_result(folder_info)
 

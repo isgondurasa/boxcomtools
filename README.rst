@@ -19,3 +19,29 @@ box.com: get folder info
 
    folder = client.folder()  # default value is "0"(root dir)
    folder_info = await folder.get()
+   print(folder_info)
+
+
+box.com: get file list
+~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+    files = await folder.files
+    
+    for fi in files:
+        print(await fi.get())
+
+
+box.com: get metadata list
+~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+    files = await folder.files
+    
+    for fi in files:
+        print(await fi.get_metadata())
+
+
+        

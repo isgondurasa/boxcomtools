@@ -28,4 +28,16 @@ class File(BaseObject, BoxConfig):
 
     async def get_metadata(self):
         self._cached_metadata = await self._metadata.get()
-        return self._cached_metadata
+        return self._cached_metadata['entries']
+
+
+    def to_dict(self):
+        if not self._data:
+            return {}
+        return {
+            'id': self._data['id'],
+            'name': self._data['name'],
+            'created_at': self._data['content_created_at'],
+            'parent_id': self._data['parent']['id'],
+            'status': self._data['item_status']
+        }

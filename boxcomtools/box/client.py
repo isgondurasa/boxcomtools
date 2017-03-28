@@ -10,11 +10,6 @@ from boxcomtools.box.folder import Folder
 
 class Client(BaseClient, Config):
 
-    def __init__(self, client_id, client_secret,
-                 access_token=None, refresh_token=None):
-        super(Client, self).__init__(client_id, client_secret,
-                                     access_token, refresh_token)
-
     @property
     def url_params(self):
         return {

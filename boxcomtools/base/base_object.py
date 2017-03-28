@@ -11,7 +11,10 @@ class BaseObject:
     def __init__(self, session=None, object_id=None):
         self._session = session
         self._object_id = object_id
+        self._data = None
 
+    def to_json(self):
+        return {}
 
     def get_url(self):
         """
