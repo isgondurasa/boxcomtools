@@ -1,0 +1,16 @@
+* User Stories
+** I am as a user want to see a file list from box.com to (profit)
+*** login to box.com
+*** create a function which would return a file list of selected level
+*** create a function which would return a file info by it's ID
+*** create a function which would return a selected's file metadata
+** I am as a user want to see a sheet list from smartseet.com to (profit)
+*** login to smartsheet
+*** create a function which would return a sheet list from smartsheet (with links to smartseets)
+*** create a function which would return a seet info by it's ID
+*** create a function which would create a sheet (and fill it with rows and cols)
+** I am as a user want to create a smartsheet from a selected file in box.com to see meadata in table view
+** I am as a user want to create a smartsheet from several files from box.com to see maadata in grid view
+
+
+
