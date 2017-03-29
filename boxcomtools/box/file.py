@@ -4,6 +4,7 @@ from boxcomtools.box.metadata import Metadata
 
 from boxcomtools.base.config import BoxConfig
 
+
 class File(BaseObject, BoxConfig):
     """
     file API endpoint
@@ -29,7 +30,6 @@ class File(BaseObject, BoxConfig):
     async def get_metadata(self):
         self._cached_metadata = await self._metadata.get()
         return self._cached_metadata['entries']
-
 
     def to_dict(self):
         if not self._data:

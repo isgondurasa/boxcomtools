@@ -34,10 +34,14 @@ class BaseClient:
     @property
     def tokens(self):
         return self.access_token, self.refresh_token
-    
-    async def _authenticate(self, url, headers, data=None):
+
+    async def _authenticate(self, url, headers=None, data=None):
         if not data:
             data = {}
+
+        if not headers:
+            headers = self.auth_headers
+
         async with aiohttp.ClientSession() as session:
             async with session.post(url,
                                     headers=headers,

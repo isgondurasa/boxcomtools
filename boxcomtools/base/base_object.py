@@ -1,6 +1,9 @@
 # base_object.py
 import json
 import logging
+
+from urllib.parse import urljoin
+
 import aiohttp
 
 
@@ -21,10 +24,8 @@ class BaseObject:
         returns base url for resource API endpoint
         __resource__ should be defined in child classes
         """
-        return "%s/%s/%s" % (self.request_url,
-                             self.__resource__,
-                             self._object_id)
-
+        return urljoin(self.request_url, self.__resource__, self._object_id)
+    
     @property
     def headers(self):
         return {
@@ -47,7 +48,6 @@ class BaseObject:
     async def update(self, object_id, payload=None):
         raise NotImplementedError
 
-
     async def __request(self, url, method, headers, data):
         async with method(url,
                           headers=headers,
@@ -59,9 +59,7 @@ class BaseObject:
                 logging.exception("Can't parse Response")
 
     async def request(self, url, method="GET", data=None):
-        if not data: data = {}
-        logging.info("before request")
-        
+        if not data: data = {}      
         async with aiohttp.ClientSession() as session:
             method = getattr(session, method.lower(), None)
             if method:

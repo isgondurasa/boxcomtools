@@ -1,6 +1,8 @@
 import hashlib
 import json
 
+import logging
+
 from urllib.parse import urlencode
 
 import aiohttp
@@ -9,7 +11,7 @@ from boxcomtools.base.config import SmartsheetConfig as Config
 from boxcomtools.base.base_client import BaseClient
 from boxcomtools.base.exceptions import NoAccessTokenException
 
-from boxcomtools.smartsheet.sheet import Sheet
+from boxcomtools.smartsheet.sheets import Sheets
 
 
 class Client(BaseClient, Config):
@@ -28,7 +30,7 @@ class Client(BaseClient, Config):
     def url_params(self):
         return {
             'response_type': 'code',
-            'client_id': self.client_id,
+            'client_id': self._client_id,
             'scope': self.scopes,
             'state': self.state
         }
@@ -40,55 +42,49 @@ class Client(BaseClient, Config):
 
     def get_token_url(self, body):
         return "%s?%s" % (self.token_obtaining_endpoint,
-                          urlencode(body))    
+                          urlencode(body))
     
     async def authenticate(self, code):
         body = Config.token_obtaining_body
-        body['client_id'] = self.client_id
+        body['client_id'] = self._client_id
         body['code'] = code
 
-        _hash = "%s|%s" % (self.client_secret, code)
+        _hash = "%s|%s" % (self._client_secret, code)
         body['hash'] = hashlib.sha256(_hash.encode("utf-8")).hexdigest()
-
-        headers = {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        }
         url = self.get_token_url(body)
-        
-        return await self._authenticate(url, headers)
+        return await self._authenticate(url)
                 
-    async def _request(self, access_token, method='get', resource='sheets', **params):
-        """
-        base request method
-        """
-        url = "%s%s" % (Config.request_url, resource)
+    # async def _request(self, access_token, method='get', resource='sheets', **params):
+    #     """
+    #     base request method
+    #     """
+    #     url = "%s%s" % (Config.request_url, resource)
 
-        async with aiohttp.ClientSession() as session:
-            async with getattr(session, method)\
-                (url,
-                 headers=self.get_headers(access_token),
-                 data=json.dumps(params)) as resp:
-                return await resp.text()
-        raise Exception
 
-    async def list_sheets(self, access_token=None):
+        
+    #     async with aiohttp.ClientSession() as session:
+    #         async with getattr(session, method)\
+    #             (url,
+    #              headers=self.get_headers(access_token),
+    #              data=json.dumps(params)) as resp:
+    #             return await resp.text()
+    #     raise Exception
+
+    async def sheets(self):
         """
         returns a list of sheets in current users scope
         """
 
-        if not access_token and not hasattr(self, 'access_token'):
-            raise NoAccessTokenException("No Access Token Defined")
+        sheets = Sheets(self)
+        return await sheets.get()
         
-        res = await self._request(access_token)
-        try:
-            res = json.loads(res)
-            sheet_o_list = []
-            sheets = res['data']
-            for sheet in sheets:
-                sheet_o_list.append(Sheet(sheet))
-            return sheet_o_list
-        except Exception:
-            raise
+        # res = await self._request(self._access_token)
+        # sheets = []
+        # try:
+        #     res = json.loads(res)
+        #     sheets = res['data']
+        # except (ValueError, KeyError):
+        #     logging.exception("Error in ")
 
-    async def get_sheet(self, sheet_id=None):
+    async def sheet(self, sheet_id=None):
         pass

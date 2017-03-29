@@ -38,7 +38,7 @@ async def test_box_folder(client, monkeypatch):
     async def get_base_folder(*args, **Kwargs):
         return {'response': 'ok'}
     monkeypatch.setattr(BaseObject, 'request', get_base_folder)
-    folder = await client.folder()
+    folder = client.folder()
     folder = await folder.get()
     assert folder['response'] == 'ok'
 
@@ -56,7 +56,7 @@ async def test_box_client_file(client, monkeypatch):
         }
 
     monkeypatch.setattr(BaseObject, 'request', get_base_file)
-    f = await client.file()
+    f = client.file()
     f = await f.get()
     assert f['id'] == object_id
 
@@ -64,16 +64,18 @@ async def test_box_client_file(client, monkeypatch):
 @pytest.mark.gen_test
 async def test_box_file_metadata(client, monkeypatch):
     async def get_metadata(*args, **kwargs):
-        return [{
-            'key_1': 'field_1',
-            'key_2': 'field_2'
-        }]
+        return {
+            'entries': [{
+                'key_1': 'field_1',
+                'key_2': 'field_2'
+            }]
+        }
     client = Client(**get_auth_params())
     object_id = '5000948880'
 
     f = File(client, object_id)
     monkeypatch.setattr(BaseObject, 'request', get_metadata)
-    m = await f.metadata
+    m = await f.get_metadata()
     assert len(m) == 1
     assert m[0]['key_1'] == 'field_1'
 

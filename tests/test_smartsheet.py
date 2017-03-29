@@ -19,6 +19,6 @@ def test_smartsheet_sheet_parse_values(monkeypatch):
         test4='test_value_4'
     )
 
-    s = Sheet(params)
+    s = Sheet((), object_id=1, **params)
     assert s.test4 == 'test_value_4'
 
