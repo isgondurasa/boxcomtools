@@ -42,6 +42,3 @@ box.com: get metadata list
     
     for fi in files:
         print(await fi.get_metadata())
-
-
-        
