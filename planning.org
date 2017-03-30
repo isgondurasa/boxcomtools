@@ -1,0 +1,25 @@
+* User Stories
+** I am as a user want to see a file list from box.com to (profit)
+*** DONE login to box.com
+    CLOSED: [2017-03-28 Вт 23:27]
+    - State "DONE "      from ""           [2017-03-28 Вт 23:27]
+*** DONE create a function which would return a file list of selected level of folder
+    CLOSED: [2017-03-29 Wed 11:28]
+    - State "DONE "      from ""           [2017-03-29 Wed 11:28]
+*** DONE create a function which would return a file info by it's ID
+    CLOSED: [2017-03-29 Wed 11:28]
+    - State "DONE "      from ""           [2017-03-29 Wed 11:28]
+*** DONE create a function which would return a selected's file metadata
+    CLOSED: [2017-03-29 Wed 11:28]
+    - State "DONE "      from ""           [2017-03-29 Wed 11:28]
+** I am as a user want to see a sheet list from smartseet.com to (profit)
+*** login to smartsheet
+*** create a function which would return a sheet list from smartsheet (with links to smartseets)
+*** create a function which would return a seet info by it's ID
+*** create a function which would create a sheet (and fill it with rows and cols)
+** I am as a user want to create a smartsheet from a selected file in box.com to see metadata in table view
+*** Create a sheet with cols(Path, Name, ID, URL, Metadata_attr1, Metadata_attr2...)
+** I am as a user want to create a smartsheet from several files from box.com to see metadata in grid view
+** I am as a user want to CRUDL a smartsheet template from json
+** I am as a user want to update smartsheet after I update a file's metadata 
+

@@ -1,0 +1,12 @@
+version: "2"
+services:
+  boxcomtools:
+    build: .
+    volumes:
+      - .:/usr/src/app
+    command: python -m http.server 8000
+    environment:
+      - BOX_CLIENT_ID=1
+      - BOX_CLIENT_SECRET=2
+      - SMARTSHEET_CLIENT_ID=3
+      - SMARTSHEET_CLIENT_SECRET=4

@@ -1,82 +1,65 @@
-from boxcomtools.box import Client
-
-from boxcomtools.smartsheet import Client as SmartsheetClient
+import json
+import logging
 
 import asyncio
-import json
-
-from aiohttp import web
-from settings import (BOX_CLIENT_ID, BOX_CLIENT_SECRET,
-                      SMARTSHEET_CLIENT_ID, SMARTSHEET_CLIENT_SECRET)
-
-
 import aiohttp_jinja2
+from aiohttp import web
+
 import jinja2
+
+from boxcomtools.box.client import Client
+from .settings import BOX_CLIENT_ID, BOX_CLIENT_SECRET, TEMPLATES
+
+
+def custom_result(data):
+    return {
+        'data': data,
+        'result': 'ok',
+        'errors': []
+    }
+
+def make_app(loop=None):
+    return web.Application(loop=loop)
+
+
+app = make_app()
+aiohttp_jinja2.setup(app, loader=jinja2.FileSystemLoader(TEMPLATES))
 
 
 def box(request):
-    cli = Client(BOX_CLIENT_ID, BOX_CLIENT_SECRET, callback=store_tokens)
-    auth_url, csrf_token = cli.auth_url
-    return web.HTTPFound(auth_url)
+    cli = Client(BOX_CLIENT_ID, BOX_CLIENT_SECRET)
+    return web.HTTPFound(cli.auth_url)
 
 
-@aiohttp_jinja2.template('index.html')
+@aiohttp_jinja2.template('base.html')
 async def auth_box(request):
+    _args = request.GET    
+    code = _args.get("code")
+    client = Client(BOX_CLIENT_ID, BOX_CLIENT_SECRET)
 
-    _args = request.args
-    code, state = _args.get("code"), _args.get("state")
+    access_token, refresh_token = await client.authenticate(code)
+    logging.info("Access token is: %s" % access_token)
+    logging.info("Refresh token is: %s" % refresh_token)
 
-    client = Client(BOX_CLIENT_ID, BOX_CLIENT_SECRET, callback=store_tokens)
-    tokens = client.authenticate(code)
-    access_token, refresh_token = tokens
+    folder = client.folder()
+    folder_info = await folder.get()
+
+    files = await folder.files
     
-    user = None
-    with client as cli:
-        user = cli.user().get().__dict__
-        print(user)
-
-    params = {
-        'access_token': access_token,
-        'refresh_token': refresh_token,
-        'current_user': user
-    }
+    for fi in files:
+        data = await fi.get()
         
-    return params
+    print("\n===============\n")
+        
+    for fi in files:
+        m = await fi.get_metadata()
+        print(m)
+
+    return custom_result(folder_info)
 
 
-async def smartsheet(request):
-    cli = SmartsheetClient(SMARTSHEET_CLIENT_ID, SMARTSHEET_CLIENT_SECRET)
-    auth_url = cli.auth_url
-    return web.HTTPFound(auth_url)
-
-@aiohttp_jinja2.template('index.html')
-async def auth_smartsheet(request):
-    _args = request.GET
-    code = _args.get('code')
-    client = SmartsheetClient(SMARTSHEET_CLIENT_ID, SMARTSHEET_CLIENT_SECRET)
-    res = await client.authorize(code)
-    print(res)
-    print("AUTH OK")    
-
-    lists = await client.list_sheets()
-
-
-    return [x.__dict__ for x in lists]
-
-
-def make_app(loop=None):
-    app = web.Application(loop=loop)
-    app.router.add_route("GET", '/smartsheet', smartsheet)
-    app.router.add_route("GET", '/api/oauth/smartsheet', auth_smartsheet)
-
-    app.router.add_route("GET", '/box', box)
-    app.router.add_route("GET", '/api/oauth/box', auth_smartsheet)
-
-    return app
-
-app = make_app()
-
-aiohttp_jinja2.setup(app, loader=jinja2.PackageLoader('templates'))
+app.router.add_route("GET", '/', box)
+app.router.add_route("GET", '/api/oauth/login', auth_box)
 
 if __name__ == "__main__":
     web.run_app(app)
