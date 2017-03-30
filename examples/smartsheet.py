@@ -41,9 +41,8 @@ async def auth_smartsheet(request):
     access_token, refresh_token = await client.authenticate(code)
 
     sheets = await client.sheets()
-    print(sheets)
     
-    return custom_result(sheets)
+    return custom_result(sheets[0].__dict__)
 
 
 app.router.add_route("GET", '/', smartsheet)
