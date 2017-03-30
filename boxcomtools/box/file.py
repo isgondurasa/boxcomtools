@@ -35,7 +35,7 @@ class File(BaseObject, BoxConfig):
         if not self._data:
             return {}
         return {
-            'id': self._data['id'],
+            'id': self._object_id,
             'name': self._data['name'],
             'created_at': self._data['content_created_at'],
             'parent_id': self._data['parent']['id'],

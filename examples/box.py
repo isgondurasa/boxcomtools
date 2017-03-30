@@ -49,7 +49,6 @@ async def auth_box(request):
     for fi in files:
         data = await fi.get()
         
-        print(fi.to_dict())
     print("\n===============\n")
         
     for fi in files:
