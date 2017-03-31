@@ -87,4 +87,5 @@ class Client(BaseClient, Config):
         #     logging.exception("Error in ")
 
     async def sheet(self, sheet_id=None):
-        pass
+        sheet = Sheet(self, sheet_id)
+        return await sheet.get()

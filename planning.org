@@ -13,9 +13,13 @@
     CLOSED: [2017-03-29 Wed 11:28]
     - State "DONE "      from ""           [2017-03-29 Wed 11:28]
 ** I am as a user want to see a sheet list from smartseet.com to (profit)
-*** login to smartsheet
-*** create a function which would return a sheet list from smartsheet (with links to smartseets)
-*** create a function which would return a seet info by it's ID
+*** DONE login to smartsheet
+    CLOSED: [2017-03-30 Чт 23:13]
+    - State "DONE "      from ""           [2017-03-30 Чт 23:13]
+*** DONE create a function which would return a sheet list from smartsheet (with links to smartseets)
+    CLOSED: [2017-03-30 Чт 23:13]
+    - State "DONE "      from ""           [2017-03-30 Чт 23:13]
+*** create a function which would return a sheet info by it's ID
 *** create a function which would create a sheet (and fill it with rows and cols)
 ** I am as a user want to create a smartsheet from a selected file in box.com to see metadata in table view
 *** Create a sheet with cols(Path, Name, ID, URL, Metadata_attr1, Metadata_attr2...)

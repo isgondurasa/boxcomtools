@@ -36,8 +36,13 @@ class BaseObject:
     async def create(self, data=None):
         raise NotImplementedError
 
-    async def get(self, object_id):
-        raise NotImplementedError
+    async def get(self):
+        """
+        Returns a dict
+        """
+        self._data = await self.request(self.get_url())
+        return self._data
+
 
     async def list(self):
         raise NotImplementedError
