@@ -14,6 +14,8 @@ class Sheet(BaseObject, SmartsheetConfig):
             if k != 'id':
                 setattr(self, k, v)
 
+        self.__name_to_id = {}
+                
     async def create(self, data):
         """
         curl https://api.smartsheet.com/2.0/sheets \
@@ -30,10 +32,37 @@ class Sheet(BaseObject, SmartsheetConfig):
                                   method="POST", data=data)
         try:
             self._object_id = result['result']['id']
-            self._data = result
         except KeyError as e:
             logging.exception("Can't create sheet")
+        self._data = result
+
+        for col in result['result']:
+            self.__name_to_id[result['result']['title']] = result['result']['id']
         return self._data
+
+    def add_rows(self, rows):
+        """
+        curl https://api.smartsheet.com/2.0/sheets/{sheetId}/rows \
+        -H "Authorization: Bearer ACCESS_TOKEN" \
+        -H "Content-Type: application/json" \
+        -X POST \
+        -d '[{"toTop":true, 
+              "cells": [ {"columnId": 7960873114331012, "value": true}, 
+                         {"columnId": 642523719853956, "value": "Y", "strict": false} ] }]'
+        """
+        if not self._data:
+            raise Exception("No column ids could be found")
+
+        data = {
+            'toTop': True,
+            "cells"[
+                {"columnId": self.__name_to_id[name],
+                 "value": value} for name, value in row.items()
+            ]
+        }
+
+        return await self.request(self.get_url('rows'),
+                           method='POST', data=data)
         
     def to_dict():
         return self._data

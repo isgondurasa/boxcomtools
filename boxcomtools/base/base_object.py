@@ -20,12 +20,12 @@ class BaseObject:
     def to_json(self):
         return {}
 
-    def get_url(self):
+    def get_url(self, ext=None):
         """
         returns base url for resource API endpoint
         __resource__ should be defined in child classes
         """
-        return urljoin(self.request_url, self.__resource__, self._object_id)
+        return urljoin(self.request_url, self.__resource__, self._object_id, ext)
     
     @property
     def headers(self):
