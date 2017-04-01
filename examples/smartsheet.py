@@ -7,6 +7,7 @@ import jinja2
 from aiohttp import web
 
 from boxcomtools.smartsheet.client import Client as SmartsheetClient
+from boxcomtools.smartsheet.sheet import Sheet
 from .settings import (SMARTSHEET_CLIENT_ID,
                        SMARTSHEET_CLIENT_SECRET,
                        TEMPLATES)
@@ -40,11 +41,12 @@ async def auth_smartsheet(request):
     client = SmartsheetClient(SMARTSHEET_CLIENT_ID, SMARTSHEET_CLIENT_SECRET)
     access_token, refresh_token = await client.authenticate(code)
 
+    
     sheets = await client.sheets()
 
     for s in sheets:
         print(await s.get())
-    
+        
     return custom_result(sheets[0].__dict__)
 
 

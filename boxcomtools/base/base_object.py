@@ -2,6 +2,7 @@
 import json
 import logging
 
+from collections.abc import MutableMapping
 from urllib.parse import urljoin
 
 import aiohttp
@@ -54,6 +55,10 @@ class BaseObject:
         raise NotImplementedError
 
     async def __request(self, url, method, headers, data):
+
+        if isinstance(data, MutableMapping):
+            data = json.dumps(data)
+    
         async with method(url,
                           headers=headers,
                           data=data) as resp:

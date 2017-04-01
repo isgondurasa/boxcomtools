@@ -42,3 +42,17 @@ box.com: get metadata list
     
     for fi in files:
         print(await fi.get_metadata())
+
+smartsheet: create sheet
+~~~~~~~~~~~~~~~~~~~~
+
+..code-block:: python
+    s = Sheet(client)
+    res = await s.create(data={
+        'name': 'test_three',
+        'columns': [
+            {'title': 'col1', 'type': 'TEXT_NUMBER', 'primary': True},
+            {'title': 'col2', 'type': 'TEXT_NUMBER'},
+            {'title': 'col3', 'type': 'PICKLIST', 'options': ["one", 'two', 'three']}
+        ]
+    })
