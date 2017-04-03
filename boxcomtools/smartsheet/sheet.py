@@ -15,7 +15,18 @@ class Sheet(BaseObject, SmartsheetConfig):
                 setattr(self, k, v)
 
         self.__name_to_id = {}
-                
+        self._cols = []
+        self._rows = []
+
+
+    def get_url(self):
+        return super().get_url(self._object_id or None)
+
+    async def get(self):
+        result = await super().get()
+        self._cols = result['columns']
+        return result
+    
     async def create(self, data):
         """
         curl https://api.smartsheet.com/2.0/sheets \
@@ -29,18 +40,21 @@ class Sheet(BaseObject, SmartsheetConfig):
                  {"title":"Status", "type":"PICKLIST", "options":["Not Started","Started","Completed"]}]}'
         """
         result = await self.request(self.get_url(),
-                                  method="POST", data=data)
+                                    method="POST", data=data)
+        self._data = result
         try:
             self._object_id = result['result']['id']
         except KeyError as e:
             logging.exception("Can't create sheet")
-        self._data = result
 
-        for col in result['result']:
-            self.__name_to_id[result['result']['title']] = result['result']['id']
+        self._cols = self._data['columns']
+        
+        for col in self._cols:
+            self.__name_to_id[col['title']] = col['id']
+
         return self._data
 
-    def add_rows(self, rows):
+    async def add_rows(self, rows):
         """
         curl https://api.smartsheet.com/2.0/sheets/{sheetId}/rows \
         -H "Authorization: Bearer ACCESS_TOKEN" \
@@ -55,14 +69,15 @@ class Sheet(BaseObject, SmartsheetConfig):
 
         data = {
             'toTop': True,
-            "cells"[
+            "cells": [
                 {"columnId": self.__name_to_id[name],
                  "value": value} for name, value in row.items()
             ]
         }
 
         return await self.request(self.get_url('rows'),
-                           method='POST', data=data)
+                                  method='POST',
+                                  data=data)
         
     def to_dict():
         return self._data

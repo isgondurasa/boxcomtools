@@ -11,7 +11,7 @@ import aiohttp
 class BaseObject:
 
     __resource__ = ""
-    
+
     def __init__(self, session=None, object_id=None):
         self._session = session
         self._object_id = object_id
@@ -25,15 +25,17 @@ class BaseObject:
         returns base url for resource API endpoint
         __resource__ should be defined in child classes
         """
-        return urljoin(self.request_url, self.__resource__, self._object_id, ext)
-    
+        if not ext:
+            return urljoin(self.request_url, self.__resource__, self._object_id)
+        return urljoin(self.request_url, self.__resource__, self._object_id) + '/%s' % ext
+
     @property
     def headers(self):
         return {
             "Authorization": "Bearer " + self._session.access_token,
             "Content-Type": "application/json"
         }
-    
+
     async def create(self, data=None):
         raise NotImplementedError
 
@@ -44,10 +46,6 @@ class BaseObject:
         self._data = await self.request(self.get_url())
         return self._data
 
-
-    async def list(self):
-        raise NotImplementedError
-
     async def delete(self, object_id):
         raise NotImplementedError
 
@@ -55,7 +53,6 @@ class BaseObject:
         raise NotImplementedError
 
     async def __request(self, url, method, headers, data):
-
         if isinstance(data, MutableMapping):
             data = json.dumps(data)
     
@@ -69,7 +66,7 @@ class BaseObject:
                 logging.exception("Can't parse Response")
 
     async def request(self, url, method="GET", data=None):
-        if not data: data = {}      
+        if not data: data = {}
         async with aiohttp.ClientSession() as session:
             method = getattr(session, method.lower(), None)
             if method:
