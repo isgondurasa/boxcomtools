@@ -47,7 +47,6 @@ async def auth_smartsheet(request):
         # print(await s.get())
         await s.get()
 
-    
     return custom_result(sheets[-1].__dict__)
 
 

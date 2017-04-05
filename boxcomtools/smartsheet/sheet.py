@@ -25,7 +25,7 @@ class Sheet(BaseObject, SmartsheetConfig):
     async def get(self):
         result = await super().get()
         self._cols = result['columns']
-        return result
+        return resultDC
     
     async def create(self, data):
         """
