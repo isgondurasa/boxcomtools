@@ -6,6 +6,7 @@ from boxcomtools.base.config import BoxConfig as Config
 
 from boxcomtools.box.file import File
 from boxcomtools.box.folder import Folder
+from boxcomtools.box.template import Template
 
 
 class Client(BaseClient, Config):
@@ -40,3 +41,6 @@ class Client(BaseClient, Config):
 
     def folder(self, object_id=None):
         return Folder(self, object_id)
+
+    def template(self, template_name=None):
+        return Template(self, template_name)

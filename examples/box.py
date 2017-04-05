@@ -41,6 +41,10 @@ async def auth_box(request):
     logging.info("Access token is: %s" % access_token)
     logging.info("Refresh token is: %s" % refresh_token)
 
+
+    template = client.template()
+    t = await template.get()
+    
     folder = client.folder()
     folder_info = await folder.get()
 
@@ -55,6 +59,11 @@ async def auth_box(request):
         m = await fi.get_metadata()
         print(m)
 
+
+    
+
+
+        
     return custom_result(folder_info)
 
 
