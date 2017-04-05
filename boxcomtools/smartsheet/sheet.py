@@ -25,7 +25,7 @@ class Sheet(BaseObject, SmartsheetConfig):
     async def get(self):
         result = await super().get()
         self._cols = result['columns']
-        return resultDC
+        return result
     
     async def create(self, data):
         """
@@ -60,7 +60,7 @@ class Sheet(BaseObject, SmartsheetConfig):
         -H "Authorization: Bearer ACCESS_TOKEN" \
         -H "Content-Type: application/json" \
         -X POST \
-        -d '[{"toTop":true, 
+        -d '[{"toTop":true,
               "cells": [ {"columnId": 7960873114331012, "value": true}, 
                          {"columnId": 642523719853956, "value": "Y", "strict": false} ] }]'
         """

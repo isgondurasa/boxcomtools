@@ -41,9 +41,27 @@ async def auth_box(request):
     logging.info("Access token is: %s" % access_token)
     logging.info("Refresh token is: %s" % refresh_token)
 
-
     template = client.template()
     t = await template.get()
+
+    template_fields = [{
+        'key': 'test_one',
+        'type': 'string',
+        'displayName': 'test_one'
+    },{
+        'key': 'test_two_enum',
+        'type': 'enum',
+        'displayName': 'test_two_enum',
+        'options': [
+            {"key": "one_option"},
+            {"key": "two_option"},
+            {"key": "three_option"}
+        ]
+    }]
+    
+    template = client.template()
+    t = await template.create("test_2_fields", template_fields)
+    print(t)
     
     folder = client.folder()
     folder_info = await folder.get()
