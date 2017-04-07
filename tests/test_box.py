@@ -3,7 +3,7 @@ from boxcomtools.base.base_object import BaseObject
 from boxcomtools.box.client import Client
 from boxcomtools.box.file import File
 from boxcomtools.box.metadata import Metadata
-
+from boxcomtools.box.template import Template
 
 from .utils import get_auth_params
 
@@ -94,3 +94,22 @@ async def test_box_file_template_metadata(client, monkeypatch):
     metadata = await m.get(template='test')
 
     assert metadata['key_1'] == 'val_1'
+
+
+@pytest.mark.gen_test
+def test_template_get_url_template_name():
+    template_name = 'test_template'
+    t = Template("session", template_name)
+    url = t.get_url()
+
+    assert template_name in url
+    assert url == 'https://api.box.com/2.0/metadata_templates/enterprise/test_template/schema'
+
+
+@pytest.mark.gen_test
+def test_template_get_url_no_template_name():
+    t = Template("session")
+
+    url = t.get_url()
+
+    assert url == 'https://api.box.com/2.0/metadata_templates/enterprise/'

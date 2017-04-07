@@ -40,17 +40,13 @@ async def auth_box(request):
     access_token, refresh_token = await client.authenticate(code)
     logging.info("Access token is: %s" % access_token)
     logging.info("Refresh token is: %s" % refresh_token)
-
     folder = client.folder()
     folder_info = await folder.get()
 
     files = await folder.files
-    
     for fi in files:
         data = await fi.get()
-        
-    print("\n===============\n")
-        
+
     for fi in files:
         m = await fi.get_metadata()
         print(m)

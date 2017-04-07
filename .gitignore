@@ -1,3 +1,10 @@
 settings.py
-*.pyc
+
 build/
+dist/
+
+*.pyc
+.#*
+.*
+
+*.egg-info
