@@ -18,7 +18,7 @@ tests_require = (
 )
 
 setup(name='boxcomtools',
-      version='0.0.8',
+      version='0.0.9',
       description='A set of tools to transfer data between box and smartsheet',
       license='Apache License 2.0',
       author='Andrey Sviridov',
