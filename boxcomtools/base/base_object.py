@@ -2,7 +2,7 @@
 import json
 import logging
 
-from collections.abc import MutableMapping
+from collections.abc import MutableMapping, Sequence
 from urllib.parse import urljoin
 
 import aiohttp
@@ -53,9 +53,9 @@ class BaseObject:
         raise NotImplementedError
 
     async def __request(self, url, method, headers, data):
-        if isinstance(data, MutableMapping):
+        if isinstance(data, (MutableMapping, Sequence)):
             data = json.dumps(data)
-    
+        
         async with method(url,
                           headers=headers,
                           data=data) as resp:
@@ -72,7 +72,6 @@ class BaseObject:
             if method:
                 return await self.__request(url, method, self.headers, data)
             raise Exception("ERROR in object request method")
-
 
     def _attach_to_object(self, data):
         for k, v in data.items():
