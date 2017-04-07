@@ -23,9 +23,11 @@
     CLOSED: [2017-04-01 Сб 23:04]
     - State "DONE "      from ""           [2017-04-01 Сб 23:04]
 *** create a function which would create a sheet (and fill it with rows and cols)
-** I am as a user want to create a smartsheet from a selected file in box.com to see metadata in table view
+** I am as a user want to create a smartsheet from a selected file in box.com to see metadata in grid view
 *** Create a sheet with cols(Path, Name, ID, URL, Metadata_attr1, Metadata_attr2...)
 ** I am as a user want to create a smartsheet from several files from box.com to see metadata in grid view
-** I am as a user want to CRUDL a box metadata template from json
+** DONE I am as a user want to CRUL a box metadata template from json
+   CLOSED: [2017-04-07 Fri 16:26]
+   - State "DONE "      from ""           [2017-04-07 Fri 16:26]
 ** I am as a user want to update smartsheet after I update a file's metadata 
 

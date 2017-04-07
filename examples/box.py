@@ -50,7 +50,7 @@ async def auth_box(request):
     for fi in files:
         m = await fi.get_metadata()
         print(m)
-        
+
     return custom_result(folder_info)
 
 
