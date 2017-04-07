@@ -1,7 +1,10 @@
 settings.py
 
 build/
+dist/
 
 *.pyc
 .#*
 .*
+
+*.egg-info

@@ -25,6 +25,8 @@ class Sheet(BaseObject, SmartsheetConfig):
     async def get(self):
         result = await super().get()
         self._cols = result['columns']
+        for col in self._cols:
+            self.__name_to_id[col['title']] = col['id']
         return result
     
     async def create(self, data):
@@ -56,6 +58,9 @@ class Sheet(BaseObject, SmartsheetConfig):
 
     async def add_rows(self, rows):
         """
+
+        rows = [{"key": "value"}]
+
         curl https://api.smartsheet.com/2.0/sheets/{sheetId}/rows \
         -H "Authorization: Bearer ACCESS_TOKEN" \
         -H "Content-Type: application/json" \
@@ -67,17 +72,18 @@ class Sheet(BaseObject, SmartsheetConfig):
         if not self._data:
             raise Exception("No column ids could be found")
 
-        data = {
-            'toTop': True,
-            "cells": [
-                {"columnId": self.__name_to_id[name],
-                 "value": value} for name, value in row.items()
-            ]
-        }
+        cells = []
+        for row in rows:
+            line = [{"columnId": self.__name_to_id[name],
+                    "value": value} for name, value in row.items()]
+            cells.append({
+                'toTop': True,
+                'cells': line
+            })
 
-        return await self.request(self.get_url('rows'),
+        return await self.request(self.get_url() + '/rows',
                                   method='POST',
-                                  data=data)
+                                  data=cells)
         
     def to_dict():
         return self._data

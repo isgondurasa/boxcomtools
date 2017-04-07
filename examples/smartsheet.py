@@ -44,8 +44,19 @@ async def auth_smartsheet(request):
     sheets = await client.sheets()
 
     for s in sheets:
-        # print(await s.get())
         await s.get()
+
+    sheet = sheets[-1]
+    print(sheet.__dict__)
+    
+    rows = [
+        {'col1': 'test_line_1', 'col2': 'test_line_1', 'col3': 'one'},
+        {'col1': 'test_line_2', 'col2': 'test_line_2', 'col3': 'two'},
+        {'col1': 'test_line_3', 'col2': 'test_line_3', 'col3': 'three'},
+    ]
+    
+    res = await sheet.add_rows(rows)
+    print(res)
 
     return custom_result(sheets[-1].__dict__)
 

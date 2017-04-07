@@ -17,7 +17,6 @@ tests_require = (
     'coverage >= 4.3.4'
 )
 
-
 setup(name='boxcomtools',
       version='0.0.8',
       description='A set of tools to transfer data between box and smartsheet',
