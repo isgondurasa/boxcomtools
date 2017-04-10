@@ -1,7 +1,7 @@
 """
 boxcomtools
 
-A set of tools to transfer data betweem box and smartseet
+A set of tools to transfer data between box and smartseet
 based on asyncio and aiohttp
 """
 
