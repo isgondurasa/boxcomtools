@@ -14,9 +14,8 @@ class TransferClient:
 
 
 class BoxToSmartsheet(TransferClient):
-    async def transfer_metadata(self):
+    async def transfer(self):
         folder = self._source.folder
-        
         all_metadata = []
         for _file in  await folder.files:
             all_metadata.append(_file.get_metadata())

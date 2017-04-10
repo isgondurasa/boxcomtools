@@ -1,8 +1,9 @@
 import json
 
 import asyncio
-import aiohttp_jinja2
+
 import jinja2
+import aiohttp_jinja2
 
 from aiohttp import web
 
@@ -37,7 +38,6 @@ async def smartsheet(request):
 async def auth_smartsheet(request):
     _args = request.GET
     code = _args.get('code')
-    print(code)
     client = SmartsheetClient(SMARTSHEET_CLIENT_ID, SMARTSHEET_CLIENT_SECRET)
     access_token, refresh_token = await client.authenticate(code)
     

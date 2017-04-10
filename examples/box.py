@@ -18,6 +18,7 @@ def custom_result(data):
         'errors': []
     }
 
+
 def make_app(loop=None):
     return web.Application(loop=loop)
 
