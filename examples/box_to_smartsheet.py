@@ -66,9 +66,10 @@ async def auth_box(request):
     session = await get_session(request)
     session['box_access_token'] = access_token
     session['box_refresh_token'] = refresh_token
-    
-    return {'box_access_token': access_token,
-            'box_refresh_token': refresh_token}
+
+    return web.HTTPFound("/")
+    # return {'box_access_token': access_token,
+    #         'box_refresh_token': refresh_token}
 
 
 @aiohttp_jinja2.template('box_to_smartsheet.html')
@@ -87,17 +88,44 @@ async def auth_smartsheet(request):
     box_access_token = session.get("box_access_token", "")
     box_refresh_token = session.get("box_refresh_token", "")
 
-    return {'smartsheet_access_token': access_token,
-            'smartsheet_refresh_token': refresh_token,
-            'box_access_token': box_access_token,
-            'box_refresh_token': box_refresh_token}
+    return web.HTTPFound("/")
+    
+    # return {'smartsheet_access_token': access_token,
+    #         'smartsheet_refresh_token': refresh_token,
+    #         'box_access_token': box_access_token,
+    #         'box_refresh_token': box_refresh_token}
 
 @aiohttp_jinja2.template('box_to_smartsheet.html')
-def index(request):
-
+async def index(request):
+    response = {
+        'box_auth': False,
+        'sm_auth': False,
+    }
     session = await get_session(request)
     
-    return {}
+    box_access_token = session.get("box_access_token", "")
+    box_refresh_token = session.get("box_refresh_token", "")
+    
+    if box_access_token:
+        response['box_auth'] = True
+        box_cli = BoxClient(BOX_CLIENT_ID, BOX_CLIENT_SECRET,
+                            box_access_token, box_refresh_token)
+
+        folder = box_cli.folder()
+        finfo = await folder.get()
+        response['folder'] = await folder.get()
+
+    sm_access_token = session.get('smartsheet_access_token')
+    sm_refresh_token = session.get('smartsheet_refresh_token')
+    if sm_access_token:
+        response['sm_auth'] = True
+
+    return response
+
+
+async def transfer_metadata(request):
+    print ("transfer_metadata")
+
 
 
 app.router.add_route("GET", "/", index)
@@ -105,7 +133,7 @@ app.router.add_route("GET", "/box", box)
 app.router.add_route("GET", "/smartsheet", smartsheet)
 app.router.add_route("GET", '/api/oauth/login', auth_box)
 app.router.add_route("GET", "/api/oauth/smartsheet", auth_smartsheet)
-
+app.router.add_route("GET", "/transfer_metadata", transfer_metadata)
 
 if __name__ == "__main__":
     web.run_app(app)

@@ -25,9 +25,11 @@ class Folder(BaseObject, Config):
         -H "Authorization: Bearer ACCESS_TOKEN" \
         """
         url = "%s/%s" % (self.get_url(), self._object_id)
-        print(url)
         self._data = await self.request(url)
-        return self._data
+        try:
+            return self._data['item_collection']['entries']
+        except KeyError:
+            logging.exception("No item collection")
 
     @property
     async def files(self):
@@ -36,7 +38,6 @@ class Folder(BaseObject, Config):
             return self._files
 
         def to_files(data):
-            print (data)
             return [
                 File(self._session,
                      x['id']) for x in data if x['type'] == 'file'
@@ -45,7 +46,6 @@ class Folder(BaseObject, Config):
         if not self._data:
             await self.get()
         try:
-            
             self._files = to_files(self._data['item_collection']['entries'])
         except KeyError:
             logging.exception("No item collection")
