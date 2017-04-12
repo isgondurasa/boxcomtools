@@ -11,54 +11,32 @@ from .utils import get_auth_params
 @pytest.mark.gen_test
 async def test_box_auth(client, monkeypatch):
     client = Client("id", 'secret')
-
     auth_url = client.auth_url
     assert auth_url
-
-    async def auth(code, *args):
-        return ('access_token', 'refresh_token')
-
-    # code, state part
-    monkeypatch.setattr(Client,
-                        'authenticate',
-                        auth)
 
     a_token, r_token = await client.authenticate("code")
     tokens = a_token, r_token
 
-    assert a_token == 'access_token'
-    assert r_token == 'refresh_token'
-    
+    assert a_token == 'access'
+    assert r_token == 'refresh'
+
 
 @pytest.mark.gen_test
+@pytest.mark.usefixtures('mock_base_response')
 async def test_box_folder(client, monkeypatch):
-
     client = Client(**get_auth_params())
-
-    async def get_base_folder(*args, **Kwargs):
-        return {'response': 'ok'}
-    monkeypatch.setattr(BaseObject, 'request', get_base_folder)
     folder = client.folder()
     folder = await folder.get()
     assert folder['response'] == 'ok'
 
 
 @pytest.mark.gen_test
+@pytest.mark.usefixtures('mock_box_files_response')
 async def test_box_client_file(client, monkeypatch):
     client = Client(**get_auth_params())
-    object_id = '5000948880'
-
-    async def get_base_file(*args, **kwargs):
-        return {
-            'name': 'test_file',
-            'type': 'test',
-            'id': object_id
-        }
-
-    monkeypatch.setattr(BaseObject, 'request', get_base_file)
     f = client.file()
     f = await f.get()
-    assert f['id'] == object_id
+    assert f['id'] == 'test_file_id'
 
 
 @pytest.mark.gen_test

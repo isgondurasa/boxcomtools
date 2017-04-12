@@ -26,10 +26,7 @@ class Folder(BaseObject, Config):
         """
         url = "%s/%s" % (self.get_url(), self._object_id)
         self._data = await self.request(url)
-        try:
-            return self._data['item_collection']['entries']
-        except KeyError:
-            logging.exception("No item collection")
+        return self._data
 
     @property
     async def files(self):
