@@ -18,6 +18,7 @@ class Folder(BaseObject, Config):
             self._object_id = "0"
         self._files = []
         self._data = {}
+        self._children = []
 
     async def get(self):
         """
@@ -26,8 +27,16 @@ class Folder(BaseObject, Config):
         """
         url = "%s/%s" % (self.get_url(), self._object_id)
         self._data = await self.request(url)
+        try:
+            self._children = self._data['item_collection']['entries']
+        except KeyError:
+            logging.exception("No children or bad response")
         return self._data
 
+    @property
+    def children(self):
+        return self._children
+    
     @property
     async def files(self):
 
