@@ -25,18 +25,15 @@ from .settings import (BOX_CLIENT_ID,
                        TEMPLATES)
 
 
-    sm_access_token = session.get('smartsheet_access_token')
-    sm_refresh_token = session.get('smartsheet_refresh_token')
-
-
 async def get_tokens_from_session(request):
-    session = await request.get_session()
+    session = await get_session(request)
     return {
         'box_access_token': session.get('box_access_token'),
         'box_refresh_token': session.get('box_refresh_token'),
         'smartsheet_access_token': session.get('smartsheet_access_token'),
         'smartsheet_refresh_token': session.get('smartsheet_refresh_token')
     }
+
 
 def custom_result(data):
     return {
@@ -51,7 +48,9 @@ def make_app(loop=None):
 
 
 app = make_app()
-fernet_key = fernet.Fernet.generate_key()
+#fernet_key = fernet.Fernet.generate_key()
+#print(fernet_key)
+fernet_key = b'C_ATKLVqNkGUf1_BTp69pyE-K8dR1gV3MNoz-jIeDBU='
 secret_key = base64.urlsafe_b64decode(fernet_key)
 setup(app, EncryptedCookieStorage(secret_key))
 
@@ -72,7 +71,7 @@ def smartsheet(request):
 
 @aiohttp_jinja2.template('box_to_smartsheet.html')
 async def auth_box(request):
-    _args = request.GET    
+    _args = request.GET
     code = _args.get("code")
     client = BoxClient(BOX_CLIENT_ID, BOX_CLIENT_SECRET)
     access_token, refresh_token = await client.authenticate(code)
@@ -86,7 +85,7 @@ async def auth_box(request):
 
 @aiohttp_jinja2.template('box_to_smartsheet.html')
 async def auth_smartsheet(request):
-    _args = request.GET    
+    _args = request.GET
     code = _args.get("code")
     client = SmartsheetClient(SMARTSHEET_CLIENT_ID,
                               SMARTSHEET_CLIENT_SECRET)
@@ -107,7 +106,6 @@ async def index(request):
     
     box_access_token = session.get("box_access_token", "")
     box_refresh_token = session.get("box_refresh_token", "")
-    
     if box_access_token:
         response['box_auth'] = True
         box_cli = BoxClient(BOX_CLIENT_ID, BOX_CLIENT_SECRET,
@@ -118,18 +116,15 @@ async def index(request):
         response['folder'] = finfo['item_collection']['entries']
 
     sm_access_token = session.get('smartsheet_access_token')
-    sm_refresh_token = session.get('smartsheet_refresh_token')
     if sm_access_token:
         response['sm_auth'] = True
-        sm_cli = SmartsheetClient(SMARTSHEET_CLIENT_ID, SMARTSHEET_CLIENT_SECRET,
-                                  sm_access_token, sm_refresh_token)
     return response
 
 
 async def transfer_metadata(request):
     print ("transfer_metadata")
-
     tokens = await get_tokens_from_session(request)
+    print(tokens)
     box_cli = BoxClient(BOX_CLIENT_ID, BOX_CLIENT_SECRET,
                         tokens['box_access_token'], tokens['box_refresh_token'])
 
@@ -140,7 +135,9 @@ async def transfer_metadata(request):
     await bts_cli.transfer()
     return web.HTTPFound("/")
 
-    
+# sm_access_token = session.get('smartsheet_access_token')
+# sm_refresh_token = session.get('smartsheet_refresh_token')
+
 
 app.router.add_route("GET", "/", index)
 app.router.add_route("GET", "/box", box)

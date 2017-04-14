@@ -27,6 +27,7 @@ class Folder(BaseObject, Config):
         """
         url = "%s/%s" % (self.get_url(), self._object_id)
         self._data = await self.request(url)
+        print(self._data)
         try:
             self._children = self._data['item_collection']['entries']
         except KeyError:

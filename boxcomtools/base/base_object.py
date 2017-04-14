@@ -25,9 +25,12 @@ class BaseObject:
         returns base url for resource API endpoint
         __resource__ should be defined in child classes
         """
+        url = urljoin(self.request_url, self.__resource__) + "/"
+        url = urljoin(url, self._object_id)
         if not ext:
-            return urljoin(self.request_url, self.__resource__, self._object_id)
-        return urljoin(self.request_url, self.__resource__, self._object_id) + '/%s' % ext
+            print (url)
+            return url
+        return urljoin(url, ext)
 
     @property
     def headers(self):

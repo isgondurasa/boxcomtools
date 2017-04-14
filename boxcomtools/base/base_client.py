@@ -25,8 +25,7 @@ class BaseClient:
         self._client_secret = client_secret
         self._access_token = access_token
         self._refresh_token = refresh_token
-        self.token_token_token_token_token = "dsfjhsfjshjksdfksdjhfkjsdhfksjdhfdjskhfksdjhfjsdkhfjsdhfsjkdhfksjdfh"
-        
+
     @property
     def access_token(self):
         return self._access_token
