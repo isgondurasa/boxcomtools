@@ -1,4 +1,7 @@
 # box_to_smartsheet.py
+import sys
+sys.path.append("..")
+
 import base64
 import json
 

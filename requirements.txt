@@ -1,7 +1,8 @@
-aiohttp==1.3.3
+aiohttp
 aiohttp-jinja2==0.13.0
 aiohttp-session
-async-timeout==1.1.0
+aiohttp-devtools
+async-timeout
 boxsdk==1.5.3
 chardet==2.3.0
 Jinja2==2.9.5

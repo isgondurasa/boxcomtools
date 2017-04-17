@@ -27,11 +27,10 @@ class BaseObject:
         """
         url = urljoin(self.request_url, self.__resource__) + "/"
         url = urljoin(url, self._object_id)
-        if not ext:
-            print (url)
-            return url
-        return urljoin(url, ext)
-
+        if ext:
+            return urljoin(url, ext)
+        return url
+        
     @property
     def headers(self):
         return {

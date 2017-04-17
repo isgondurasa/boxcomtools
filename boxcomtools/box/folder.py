@@ -25,8 +25,7 @@ class Folder(BaseObject, Config):
         curl https://api.box.com/2.0/folders/FOLDER_ID \
         -H "Authorization: Bearer ACCESS_TOKEN" \
         """
-        url = "%s/%s" % (self.get_url(), self._object_id)
-        self._data = await self.request(url)
+        self._data = await self.request(self.get_url())
         print(self._data)
         try:
             self._children = self._data['item_collection']['entries']

@@ -21,19 +21,21 @@ class BoxToSmartsheet(TransferClient):
     
     async def transfer(self):
         # gather metadata
+        print("\nSTART: ===================\n")
         folder = self._source.folder()
         all_metadata = []
         for _file in await folder.files:
             await _file.get()
-            print(_file.__dict__)
-            all_metadata.append({_file['name']: _file.get_metadata()})
+            if _file.get('type') == 'file':
+                print(_file.__dict__)
+                all_metadata.append({_file._data['name']: _file.get_metadata()})
         all_metadata = await asyncio.gather(*all_metadata)
 
         # parse_metadata
         parsed_metadata = await self.__parse_metadata(all_metadata)
         # create_sheet
         print(parsed_metadata)
-
+        print("\n END: =====================\n")
         # fill rows
 
 
