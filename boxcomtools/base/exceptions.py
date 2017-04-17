@@ -18,3 +18,12 @@ class NoAccessTokenException(Exception):
 
 class NoAccessTokenDefined(Exception):
     pass
+
+class HTTPError(Exception):
+    def __init__(self, status, reason):
+        self._status = status
+        self._reason = reason
+
+    def __str__(self):
+        return "Error. Status {}: {}".format(self._status, self._reason)
+    

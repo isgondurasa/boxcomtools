@@ -26,7 +26,9 @@ class Folder(BaseObject, Config):
         -H "Authorization: Bearer ACCESS_TOKEN" \
         """
         self._data = await self.request(self.get_url())
+
         print(self._data)
+        
         try:
             self._children = self._data['item_collection']['entries']
         except KeyError:
@@ -36,24 +38,15 @@ class Folder(BaseObject, Config):
     @property
     def children(self):
         return self._children
-    
+
+    def __parse_to_files(self, files):
+        return [
+                File(self._session,
+                     f['id']) for f in files if f['type'] == 'file'
+        ]
+
     @property
     async def files(self):
-
-        if self._files:
-            return self._files
-
-        def to_files(data):
-            return [
-                File(self._session,
-                     x['id']) for x in data if x['type'] == 'file'
-            ]
-
         if not self._data:
             await self.get()
-        try:
-            self._files = to_files(self._data['item_collection']['entries'])
-        except KeyError:
-            logging.exception("No item collection")
-        
-        return self._files
+        return self.__parse_to_files(self._children)

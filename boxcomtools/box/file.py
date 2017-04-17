@@ -39,5 +39,6 @@ class File(BaseObject, BoxConfig):
             'name': self._data['name'],
             'created_at': self._data['content_created_at'],
             'parent_id': self._data['parent']['id'],
-            'status': self._data['item_status']
+            'status': self._data['item_status'],
+            'path': [p['name'] for p in self._data['path_collection']['entries']]
         }

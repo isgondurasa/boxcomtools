@@ -7,6 +7,7 @@ from urllib.parse import urljoin
 
 import aiohttp
 
+from boxcomtools.base.exceptions import HTTPError
 
 class BaseObject:
 
@@ -57,15 +58,17 @@ class BaseObject:
     async def __request(self, url, method, headers, data):
         if isinstance(data, (MutableMapping, Sequence)):
             data = json.dumps(data)
-        
         async with method(url,
                           headers=headers,
                           data=data) as resp:
-            body = await resp.text()
-            try:
-                return json.loads(body)
-            except ValueError:
-                logging.exception("Can't parse Response")
+
+            if resp.status == 200:
+                body = await resp.text()
+                try:
+                    return json.loads(body)
+                except ValueError:
+                    logging.exception("Can't parse Response")
+            raise HTTPError(resp.status, resp.reason)
 
     async def request(self, url, method="GET", data=None):
         if not data: data = {}

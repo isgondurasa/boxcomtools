@@ -96,7 +96,7 @@ async def auth_smartsheet(request):
     session = await get_session(request)
 
     session['smartsheet_access_token'] = access_token
-    session['smartseet_refresh_token'] = refresh_token
+    session['smartsheet_refresh_token'] = refresh_token
     return web.HTTPFound("/")
 
 @aiohttp_jinja2.template('box_to_smartsheet.html')
@@ -141,13 +141,21 @@ async def transfer_metadata(request):
 # sm_access_token = session.get('smartsheet_access_token')
 # sm_refresh_token = session.get('smartsheet_refresh_token')
 
+async def logout(request):
+    session = await get_session(request)
 
+    for t in ('box_access_token', 'box_refresh_token',
+              'smartsheet_access_token', 'smartsheet_refresh_token'):
+        session[t] = ""
+
+    return web.HTTPFound("/")
+        
 app.router.add_route("GET", "/", index)
 app.router.add_route("GET", "/box", box)
 app.router.add_route("GET", "/smartsheet", smartsheet)
 app.router.add_route("GET", '/api/oauth/login', auth_box)
 app.router.add_route("GET", "/api/oauth/smartsheet", auth_smartsheet)
 app.router.add_route("GET", "/transfer_metadata", transfer_metadata)
-
+app.router.add_route("GET", "/logout", logout)
 if __name__ == "__main__":
     web.run_app(app)
