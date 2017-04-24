@@ -38,7 +38,7 @@ class Client(BaseClient, Config):
     def get_token_url(self, body):
         return "%s?%s" % (self.token_obtaining_endpoint,
                           urlencode(body))
-   
+
     async def authenticate(self, code):
         body = Config.token_obtaining_body
         body['client_id'] = self._client_id
