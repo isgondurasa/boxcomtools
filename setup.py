@@ -5,6 +5,7 @@ install_requires = (
     'aiohttp >= 1.3.3',
     'aiohttp-jinja2 >= 0.13.0',
     'async-timeout >= 1.2.0',
+    'pathlib'
 )
 
 tests_require = (

@@ -1,7 +1,5 @@
 # box_to_smartsheet.py
-import sys
-sys.path.append("..")
-
+import logging
 import base64
 import json
 
@@ -19,6 +17,8 @@ from boxcomtools.base.transfer_client import BoxToSmartsheet
 from boxcomtools.box.client import Client as BoxClient
 from boxcomtools.smartsheet.client import Client as SmartsheetClient
 from boxcomtools.base.transfer_client import BoxToSmartsheet
+
+from boxcomtools.base.exceptions import HTTPError
 
 
 from .settings import (BOX_CLIENT_ID,
@@ -99,6 +99,7 @@ async def auth_smartsheet(request):
     session['smartsheet_refresh_token'] = refresh_token
     return web.HTTPFound("/")
 
+
 @aiohttp_jinja2.template('box_to_smartsheet.html')
 async def index(request):
     response = {
@@ -110,14 +111,19 @@ async def index(request):
     box_access_token = session.get("box_access_token", "")
     box_refresh_token = session.get("box_refresh_token", "")
     if box_access_token:
-        response['box_auth'] = True
-        box_cli = BoxClient(BOX_CLIENT_ID, BOX_CLIENT_SECRET,
-                            box_access_token, box_refresh_token)
 
-        folder = box_cli.folder()
-        finfo = await folder.get()
-        response['folder'] = finfo['item_collection']['entries']
+        try:
+            response['box_auth'] = True
+            box_cli = BoxClient(BOX_CLIENT_ID, BOX_CLIENT_SECRET,
+                                box_access_token, box_refresh_token)
 
+            folder = box_cli.folder()
+            finfo = await folder.get()
+            response['folder'] = finfo['item_collection']['entries']
+        except HTTPError as e:
+            logging.exception(e)
+            return web.HTTPFound("/logout")
+            
     sm_access_token = session.get('smartsheet_access_token')
     if sm_access_token:
         response['sm_auth'] = True
@@ -127,7 +133,7 @@ async def index(request):
 async def transfer_metadata(request):
     print ("transfer_metadata")
     tokens = await get_tokens_from_session(request)
-    print(tokens)
+
     box_cli = BoxClient(BOX_CLIENT_ID, BOX_CLIENT_SECRET,
                         tokens['box_access_token'], tokens['box_refresh_token'])
 
@@ -138,8 +144,6 @@ async def transfer_metadata(request):
     await bts_cli.transfer()
     return web.HTTPFound("/")
 
-# sm_access_token = session.get('smartsheet_access_token')
-# sm_refresh_token = session.get('smartsheet_refresh_token')
 
 async def logout(request):
     session = await get_session(request)
