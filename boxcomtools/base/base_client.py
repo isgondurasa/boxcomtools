@@ -10,6 +10,9 @@ from boxcomtools.base.exceptions import (NoClientID,
 
 
 class BaseClient:
+    """
+    Base api client
+    """
     def __init__(self, client_id, client_secret,
                  access_token=None, refresh_token=None):
         if not client_id:

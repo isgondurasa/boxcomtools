@@ -7,6 +7,8 @@ from urllib.parse import urljoin
 
 import aiohttp
 
+from boxcomtools.base.exceptions import HTTPError
+
 
 class BaseObject:
 
@@ -25,9 +27,11 @@ class BaseObject:
         returns base url for resource API endpoint
         __resource__ should be defined in child classes
         """
-        if not ext:
-            return urljoin(self.request_url, self.__resource__, self._object_id)
-        return urljoin(self.request_url, self.__resource__, self._object_id) + '/%s' % ext
+        url = urljoin(self.request_url, self.__resource__) + "/"
+        url = urljoin(url, self._object_id)
+        if ext:
+            return urljoin(url, ext)
+        return url
 
     @property
     def headers(self):
@@ -55,15 +59,16 @@ class BaseObject:
     async def __request(self, url, method, headers, data):
         if isinstance(data, (MutableMapping, Sequence)):
             data = json.dumps(data)
-        
         async with method(url,
                           headers=headers,
                           data=data) as resp:
             body = await resp.text()
-            try:
-                return json.loads(body)
-            except ValueError:
-                logging.exception("Can't parse Response")
+            if resp.status == 200:
+                try:
+                    return json.loads(body)
+                except ValueError:
+                    logging.exception("Can't parse Response")
+            raise HTTPError(resp.status, body)
 
     async def request(self, url, method="GET", data=None):
         if not data: data = {}

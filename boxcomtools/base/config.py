@@ -19,7 +19,6 @@ class SmartsheetConfig:
     redirect_url = env_get("SM_REDIRECT_URL", "http://localhost:8080/api/oauth/smartsheet")
     scopes = ("READ_SHEETS", "WRITE_SHEETS", "DELETE_SHEETS", "CREATE_SHEETS", "SHARE_SHEETS")
     state = "PREPARE"
-
     request_url = env_get("SM_REQUEST_URL", "https://api.smartsheet.com/2.0/")
 
 

@@ -18,36 +18,35 @@ class Folder(BaseObject, Config):
             self._object_id = "0"
         self._files = []
         self._data = {}
+        self._children = []
 
     async def get(self):
         """
         curl https://api.box.com/2.0/folders/FOLDER_ID \
         -H "Authorization: Bearer ACCESS_TOKEN" \
         """
-        url = "%s/%s" % (self.get_url(), self._object_id)
-        print(url)
-        self._data = await self.request(url)
+        self._data = await self.request(self.get_url())
+
+        print(self._data)
+        
+        try:
+            self._children = self._data['item_collection']['entries']
+        except KeyError:
+            logging.exception("No children or bad response")
         return self._data
 
     @property
-    async def files(self):
+    def children(self):
+        return self._children
 
-        if self._files:
-            return self._files
-
-        def to_files(data):
-            print (data)
-            return [
+    def __parse_to_files(self, files):
+        return [
                 File(self._session,
-                     x['id']) for x in data if x['type'] == 'file'
-            ]
+                     f['id']) for f in files if f['type'] == 'file'
+        ]
 
+    @property
+    async def files(self):
         if not self._data:
             await self.get()
-        try:
-            
-            self._files = to_files(self._data['item_collection']['entries'])
-        except KeyError:
-            logging.exception("No item collection")
-        
-        return self._files
+        return self.__parse_to_files(self._children)

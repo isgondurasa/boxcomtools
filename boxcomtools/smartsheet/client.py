@@ -1,16 +1,11 @@
 import hashlib
-import json
-
-import logging
 
 from urllib.parse import urlencode
 
-import aiohttp
-
 from boxcomtools.base.config import SmartsheetConfig as Config
 from boxcomtools.base.base_client import BaseClient
-from boxcomtools.base.exceptions import NoAccessTokenException
 
+from boxcomtools.smartsheet.sheet import Sheet
 from boxcomtools.smartsheet.sheets import Sheets
 
 
@@ -34,7 +29,7 @@ class Client(BaseClient, Config):
             'scope': self.scopes,
             'state': self.state
         }
-        
+
     @property
     def auth_url(self):
         return "%s?%s" % (Config.auth_endpoint,
@@ -43,7 +38,7 @@ class Client(BaseClient, Config):
     def get_token_url(self, body):
         return "%s?%s" % (self.token_obtaining_endpoint,
                           urlencode(body))
-    
+
     async def authenticate(self, code):
         body = Config.token_obtaining_body
         body['client_id'] = self._client_id
@@ -53,39 +48,17 @@ class Client(BaseClient, Config):
         body['hash'] = hashlib.sha256(_hash.encode("utf-8")).hexdigest()
         url = self.get_token_url(body)
         return await self._authenticate(url)
-                
-    # async def _request(self, access_token, method='get', resource='sheets', **params):
-    #     """
-    #     base request method
-    #     """
-    #     url = "%s%s" % (Config.request_url, resource)
-
-
-        
-    #     async with aiohttp.ClientSession() as session:
-    #         async with getattr(session, method)\
-    #             (url,
-    #              headers=self.get_headers(access_token),
-    #              data=json.dumps(params)) as resp:
-    #             return await resp.text()
-    #     raise Exception
 
     async def sheets(self):
         """
         returns a list of sheets in current users scope
         """
-
         sheets = Sheets(self)
         return await sheets.get()
-        
-        # res = await self._request(self._access_token)
-        # sheets = []
-        # try:
-        #     res = json.loads(res)
-        #     sheets = res['data']
-        # except (ValueError, KeyError):
-        #     logging.exception("Error in ")
 
     async def sheet(self, sheet_id=None):
+        """
+        returns sheet
+        """
         sheet = Sheet(self, sheet_id)
         return await sheet.get()

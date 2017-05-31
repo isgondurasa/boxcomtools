@@ -9,7 +9,7 @@ class Metadata(BaseObject):
     """
     __scope__ = 'enterprise'
     __resource__ = "metadata"
-    
+
     def get_url(self, template=""):
         url = BoxConfig.request_url + 'files/%s/metadata' % self.id
         if template:
@@ -19,7 +19,7 @@ class Metadata(BaseObject):
     def to_json(self):
         if not self._data:
             return {}
-    
+
     async def get(self, template=""):
         """
         curl https://api.box.com/2.0/files/5010739061/metadata/enterprise/bandInfo \

@@ -4,7 +4,7 @@ services:
     build: .
     volumes:
       - .:/usr/src/app
-    command: python -m http.server 8000
+    command: adev runserver -p 8080 examples/box_to_smartsheet.py
     environment:
       - BOX_CLIENT_ID=1
       - BOX_CLIENT_SECRET=2

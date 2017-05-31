@@ -1,8 +1,8 @@
 """
 boxcomtools
 
-A set of tools to transfer data betweem box and smartseet
+A set of tools to transfer data between box and smartseet
 based on asyncio and aiohttp
 """
 
-__version__ = "0.0.9"
+__version__ = "0.1.0"

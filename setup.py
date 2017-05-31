@@ -1,11 +1,11 @@
 #!/usr/bin/env python
-
 from setuptools import setup
 
 install_requires = (
     'aiohttp >= 1.3.3',
     'aiohttp-jinja2 >= 0.13.0',
-    'async-timeout >= 1.1.0',
+    'async-timeout >= 1.2.0',
+    'pathlib'
 )
 
 tests_require = (
@@ -24,7 +24,7 @@ setup(name='boxcomtools',
       author='Andrey Sviridov',
       author_email='isgondurasa@gmail.com',
       url='https://github.com/isgondurasa/boxcomtools',
-      packages=['boxcomtools'],
+      packages=['boxcomtools', 'boxcomtools.base', 'boxcomtools.box', 'boxcomtools.smartsheet'],
       install_requires=install_requires,
       tests_require=tests_require
      )
