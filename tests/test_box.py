@@ -13,9 +13,8 @@ async def test_box_auth(client, monkeypatch):
     client = Client("id", 'secret')
     auth_url = client.auth_url
     assert auth_url
-
+   
     a_token, r_token = await client.authenticate("code")
-    tokens = a_token, r_token
 
     assert a_token == 'access'
     assert r_token == 'refresh'
@@ -36,7 +35,7 @@ async def test_box_client_file(client, monkeypatch):
     client = Client(**get_auth_params())
     f = client.file()
     f = await f.get()
-    assert f['id'] == 'test_file_id'
+    assert f['id'] == '12345'
 
 
 @pytest.mark.gen_test

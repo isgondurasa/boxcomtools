@@ -9,6 +9,7 @@ import aiohttp
 
 from boxcomtools.base.exceptions import HTTPError
 
+
 class BaseObject:
 
     __resource__ = ""
@@ -31,7 +32,7 @@ class BaseObject:
         if ext:
             return urljoin(url, ext)
         return url
-        
+
     @property
     def headers(self):
         return {
@@ -61,14 +62,13 @@ class BaseObject:
         async with method(url,
                           headers=headers,
                           data=data) as resp:
-
+            body = await resp.text()
             if resp.status == 200:
-                body = await resp.text()
                 try:
                     return json.loads(body)
                 except ValueError:
                     logging.exception("Can't parse Response")
-            raise HTTPError(resp.status, resp.reason)
+            raise HTTPError(resp.status, body)
 
     async def request(self, url, method="GET", data=None):
         if not data: data = {}

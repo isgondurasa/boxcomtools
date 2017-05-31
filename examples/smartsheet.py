@@ -21,8 +21,10 @@ def custom_result(data):
         'errors': []
     }
 
+
 def make_app(loop=None):
     return web.Application(loop=loop)
+
 
 app = make_app()
 aiohttp_jinja2.setup(app, loader=jinja2.FileSystemLoader(TEMPLATES))

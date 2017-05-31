@@ -123,7 +123,6 @@ async def index(request):
         except HTTPError as e:
             logging.exception(e)
             return web.HTTPFound("/logout")
-            
     sm_access_token = session.get('smartsheet_access_token')
     if sm_access_token:
         response['sm_auth'] = True
