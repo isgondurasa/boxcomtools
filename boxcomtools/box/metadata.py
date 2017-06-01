@@ -11,7 +11,8 @@ class Metadata(BaseObject):
     __resource__ = "metadata"
 
     def get_url(self, template=""):
-        url = BoxConfig.request_url + 'files/%s/metadata' % self.id
+        url = BoxConfig.request_url + 'files/%s/%s' % (self.id,
+                                                       self.__resource__)
         if template:
             url += "/%s/%s" % (self.__scope__, template)
         return url
