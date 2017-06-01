@@ -1,6 +1,7 @@
 # file.py
 from boxcomtools.base.base_object import BaseObject
 from boxcomtools.box.metadata import Metadata
+from boxcomtools.box.file_version import FileVersion
 
 from boxcomtools.base.config import BoxConfig
 
@@ -14,6 +15,7 @@ class File(BaseObject, BoxConfig):
     def __init__(self, session, object_id=None, name=""):
         super(File, self).__init__(session, object_id)        
         self._metadata = Metadata(session, object_id)
+        self._versions = FileVersion(session, object_id)
         self._cached_metadata = None
         self._name = name
         self._data = None
@@ -31,6 +33,10 @@ class File(BaseObject, BoxConfig):
         self._cached_metadata = await self._metadata.get()
         return self._cached_metadata['entries']
 
+    async def get_versions(self):
+        versions = await self._versions.get()
+        return versions['entries']
+    
     def to_dict(self):
         if not self._data:
             return {}
