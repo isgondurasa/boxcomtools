@@ -37,7 +37,7 @@ class File(BaseObject, BoxConfig):
         return versions['entries']
 
     async def download(self, version=None):
-        url =  self.get_url(ext='content') + "?version=%s" % version
+        url =  self.get_url() + '/content?version=%s' % version
         response = await self.request(url)
         return response
 
