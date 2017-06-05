@@ -25,7 +25,6 @@ class File(BaseObject, BoxConfig):
         curl https://api.box.com/2.0/files/FILE_ID
         -H "Authorization: Bearer ACCESS_TOKEN"
         """
-        print(self.get_url())
         self._data = await self.request(self.get_url())
         return self._data
 
@@ -36,6 +35,11 @@ class File(BaseObject, BoxConfig):
     async def get_versions(self):
         versions = await self._versions.get()
         return versions['entries']
+
+    async def download(self, version=None):
+        url =  self.get_url(ext='content')
+        response = await self.request(url)
+        return response
 
     def to_dict(self):
         if not self._data:
