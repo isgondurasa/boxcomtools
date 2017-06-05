@@ -38,7 +38,7 @@ class File(BaseObject, BoxConfig):
 
     async def download(self, version=None):
         url =  self.get_url() + '/content?version=%s' % version
-        response = await self.request(url)
+        response = await self.request(url, raw_resp=True)
         return response
 
     def to_dict(self):

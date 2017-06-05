@@ -56,12 +56,14 @@ class BaseObject:
     async def update(self, object_id, payload=None):
         raise NotImplementedError
 
-    async def __request(self, url, method, headers, data):
+    async def __request(self, url, method, headers, data, raw_resp=False):
         if isinstance(data, (MutableMapping, Sequence)):
             data = json.dumps(data)
         async with method(url,
                           headers=headers,
                           data=data) as resp:
+            if raw_resp:
+                return raw_resp
             body = await resp.text()
             if resp.status == 200:
                 try:
@@ -70,12 +72,12 @@ class BaseObject:
                     logging.exception("Can't parse Response")
             raise HTTPError(resp.status, body)
 
-    async def request(self, url, method="GET", data=None):
+    async def request(self, url, method="GET", data=None, raw_resp=False):
         if not data: data = {}
         async with aiohttp.ClientSession() as session:
             method = getattr(session, method.lower(), None)
             if method:
-                return await self.__request(url, method, self.headers, data)
+                return await self.__request(url, method, self.headers, data, raw_resp=raw_resp)
             raise Exception("ERROR in object request method")
 
     def _attach_to_object(self, data):
