@@ -64,7 +64,7 @@ class BaseObject:
                           data=data) as resp:
             if raw_resp:
                 return resp
-            body = await resp.text()
+            body = await resp.read()
             if resp.status == 200:
                 try:
                     return json.loads(body)
