@@ -63,7 +63,7 @@ class BaseObject:
                           headers=headers,
                           data=data) as resp:
             if raw_resp:
-                return await resp.content.read()
+                return resp
             body = await resp.text()
             if resp.status == 200:
                 try:
